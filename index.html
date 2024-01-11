@@ -3,12 +3,29 @@
     <head>
         <title>Big Buck Bunny</title>
         <link type="image/png" sizes="96x96" rel="icon" href="https://github.com/emanuele-artioli/emanuele-artioli.github.io/raw/main/bunny.png">
+        <style>
+            video {
+                width: 1280px;
+                height: 720px;
+            }
+        </style>
     </head>
 <body>
     <h1>Enjoy this playback of Big Buck Bunny!</h1>
-    <video width="1280" height="720" controls playsinline autoplay muted>
+    <video controls playsinline autoplay muted>
         <source src="https://github.com/emanuele-artioli/emanuele-artioli.github.io/raw/main/av1_1080.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+
+    <h1>Now even as in Adaptive Streaming!</h1>
+    <video id="videoPlayer" controls></video>
+    <script src="dash.all.min.js"></script>
+    <script>
+        (function(){
+            var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
+            var player = dashjs.MediaPlayer().create();
+            player.initialize(document.querySelector("#videoPlayer"), url, true);
+        })();
+    </script>
 </body>
 </html>
