@@ -16,7 +16,8 @@
     <script src="dash.all.min.js"></script>
     <script>
         (function(){
-            var url = "./big_buck_bunny_av1/output.mpd";
+            // var url = "./big_buck_bunny_av1/output.mpd";
+            var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
             var player = dashjs.MediaPlayer().create();
             player.initialize(document.querySelector("#videoPlayer"), url, true);
             player.updateSettings({streaming: {fastSwitchEnabled: true}});
