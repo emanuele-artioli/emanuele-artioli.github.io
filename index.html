@@ -14,7 +14,7 @@
     <h1>Enjoy this adaptive playback of Big Buck Bunny!</h1>
     <video id="videoPlayer" controls></video>
     <script src="dash.all.min.js"></script>
-    <!-- <script>
+    <script>
         (function(){
             // var url = "./big_buck_bunny_av1/output.mpd";
             var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
@@ -22,109 +22,6 @@
             player.initialize(document.querySelector("#videoPlayer"), url, true);
             player.updateSettings({streaming: {fastSwitchEnabled: true}});
         })();
-    </script> -->
-
-    <script>
-        function init() {
-            var video,
-                player,
-                url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
-
-            video = document.querySelector("video");
-            player = dashjs.MediaPlayer().create();
-            player.initialize(video, url, true);
-            player.on(dashjs.MediaPlayer.events["PLAYBACK_ENDED"], function () {
-                clearInterval(eventPoller);
-                clearInterval(bitrateCalculator);
-            });
-
-            var eventPoller = setInterval(function () {
-                var streamInfo = player.getActiveStream().getStreamInfo();
-                var dashMetrics = player.getDashMetrics();
-                var dashAdapter = player.getDashAdapter();
-
-                if (dashMetrics && streamInfo) {
-                    const periodIdx = streamInfo.index;
-                    var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
-                    var bufferLevel = dashMetrics.getCurrentBufferLevel('video', true);
-                    var bitrate = repSwitch ? Math.round(dashAdapter.getBandwidthForRepresentation(repSwitch.to, periodIdx) / 1000) : NaN;
-                    var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo);
-                    var currentRep = adaptation.Representation_asArray.find(function (rep) {
-                        return rep.id === repSwitch.to
-                    })
-                    var frameRate = currentRep.frameRate;
-                    var resolution = currentRep.width + 'x' + currentRep.height;
-                    document.getElementById('bufferLevel').innerText = bufferLevel + " secs";
-                    document.getElementById('framerate').innerText = frameRate + " fps";
-                    document.getElementById('reportedBitrate').innerText = bitrate + " Kbps";
-                    document.getElementById('resolution').innerText = resolution;
-                }
-            }, 1000);
-
-            if (video.webkitVideoDecodedByteCount !== undefined) {
-                var lastDecodedByteCount = 0;
-                const bitrateInterval = 5;
-                var bitrateCalculator = setInterval(function () {
-                    var calculatedBitrate = (((video.webkitVideoDecodedByteCount - lastDecodedByteCount) / 1000) * 8) / bitrateInterval;
-                    document.getElementById('calculatedBitrate').innerText = Math.round(calculatedBitrate) + " Kbps";
-                    lastDecodedByteCount = video.webkitVideoDecodedByteCount;
-                }, bitrateInterval * 1000);
-            } else {
-                document.getElementById('chrome-only').style.display = "none";
-            }
-
-
-
-        }
-
     </script>
-
-<script>
-    var player,firstLoad = true;
-
-    setListener("FRAGMENT_LOADING_COMPLETED");
-
-    function log(msg) {
-        msg = msg.length > 90 ? msg.substring(0, 90) + "..." : msg; 
-        var tracePanel = document.getElementById("trace");
-        tracePanel.innerHTML += msg + "\n";
-        tracePanel.scrollTop = tracePanel.scrollHeight;
-        console.log(msg);
-    }
-
-    function setListener(eventName)
-    {
-        player.on(dashjs.MediaPlayer.events[eventName],function(e){
-            console.log(e)
-        });
-    }
-
-    function load(button)
-    {
-        var url = "https://livesim.dashif.org/livesim/scte35_2/testpic_2s/Manifest.mpd";
-
-        if (!firstLoad)
-        {
-            player.attachSource(url);
-        }
-        else
-        {
-            firstLoad = false;
-            button.value = "RELOAD PLAYER";
-            player.initialize(document.querySelector("video"), url, true);
-        }
-        document.getElementById("trace").innerHTML = "";
-    }
-</script>
-
-
-
-
-    <div class="dash-video-player ">
-        <div class="videoContainer" id="videoContainer">
-            <video preload="auto" controls="true"></video>
-        </div>
-    </div>
-
 </body>
 </html>
