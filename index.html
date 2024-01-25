@@ -14,7 +14,7 @@
     <h1>Enjoy this adaptive playback of Big Buck Bunny!</h1>
     <video id="videoPlayer" controls></video>
     <script src="dash.all.min.js"></script>
-    <script>
+    <!-- <script>
         (function(){
             // var url = "./big_buck_bunny_av1/output.mpd";
             var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
@@ -22,7 +22,7 @@
             player.initialize(document.querySelector("#videoPlayer"), url, true);
             player.updateSettings({streaming: {fastSwitchEnabled: true}});
         })();
-    </script>
+    </script> -->
 
     <script>
         function init() {
@@ -74,9 +74,52 @@
             }
 
 
+
         }
-        
+
     </script>
+
+<script>
+    var player,firstLoad = true;
+
+    setListener(FRAGMENT_LOADING_COMPLETED);
+
+    function log(msg) {
+        msg = msg.length > 90 ? msg.substring(0, 90) + "..." : msg; 
+        var tracePanel = document.getElementById("trace");
+        tracePanel.innerHTML += msg + "\n";
+        tracePanel.scrollTop = tracePanel.scrollHeight;
+        console.log(msg);
+    }
+
+    function setListener(eventName)
+    {
+        player.on(dashjs.MediaPlayer.events[eventName],function(e){
+            console.log(e)
+        });
+    }
+
+    function load(button)
+    {
+        var url = "https://livesim.dashif.org/livesim/scte35_2/testpic_2s/Manifest.mpd";
+
+        if (!firstLoad)
+        {
+            player.attachSource(url);
+        }
+        else
+        {
+            firstLoad = false;
+            button.value = "RELOAD PLAYER";
+            player.initialize(document.querySelector("video"), url, true);
+        }
+        document.getElementById("trace").innerHTML = "";
+    }
+</script>
+
+
+
+
     <div class="dash-video-player ">
         <div class="videoContainer" id="videoContainer">
             <video preload="auto" controls="true"></video>
